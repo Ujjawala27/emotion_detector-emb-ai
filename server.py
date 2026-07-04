@@ -8,6 +8,7 @@ app = Flask("Emotion Detector")
 
 @app.route("/emotionDetector", methods=["GET", "POST"])
 def emotion_detect():
+    """Handle emotion detection requests and return the system response."""
     # Read input from either query string (GET) or JSON (POST)
     if request.method == "GET":
         text_to_analyze = request.args.get("textToAnalyze")
@@ -16,14 +17,14 @@ def emotion_detect():
         text_to_analyze = data.get("statement") or data.get("textToAnalyze")
 
     # Blank input -> required message
-    if text_to_analyze is None or text_to_analyze == "":
-        return "Invalid text! Please try again!.", 400
+    if text_to_analyze is None or text_to_analyze.strip() == "":
+        return "Invalid text! Please try again!.", 200
 
     result = emotion_detector(text_to_analyze)
 
     # dominant_emotion None -> required message
     if result.get("dominant_emotion") is None:
-        return "Invalid text! Please try again!.", 400
+        return "Invalid text! Please try again!.", 200
 
     anger = result["anger"]
     disgust = result["disgust"]
@@ -36,7 +37,7 @@ def emotion_detect():
         f"For the given statement, the system response is "
         f"'anger': {anger}, 'disgust': {disgust}, 'fear': {fear}, 'joy': {joy} and "
         f"'sadness': {sadness}. The dominant emotion is {dominant_emotion}."
-    )
+    ),200
 
 
 @app.route("/")
